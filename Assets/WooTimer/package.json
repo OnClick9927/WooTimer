@@ -1,0 +1,13 @@
+{
+  "name": "com.woo.timer",
+  "displayName": "WooTimer",
+  "version": "1.0.3",
+  "unity": "2019.4",
+  "description": "WooTimer",
+  "type": "library",
+  "author": {
+    "name": "woo",
+    "email": "2809399366@qq.com",
+    "url": "https://github.com/OnClick9927"
+  }
+}
