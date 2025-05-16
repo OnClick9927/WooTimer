@@ -35,4 +35,5 @@
       // 杀掉 所有  用 AddTo 绑定到 this 的计时器
      this.KillTimers();
 ```
-
+## 编辑器监视窗口
+![image](https://github.com/user-attachments/assets/cfde0fb9-7d81-44f9-9fda-167f2e828ca1)
