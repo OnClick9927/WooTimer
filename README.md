@@ -1,7 +1,7 @@
 # WooTimer
 好用的计时器 运行时+编辑器
 ## upm https://github.com/OnClick9927/WooTimer.git#upm
-
+## API 介绍   [更多用法](.//Assets/WooTimer/Runtime/TimeEx.cs)
 ``` csharp
     //延时+API
      var delay = TimeEx.Delay(1, (time, delta) => { Debug.Log("Do Sth"); })
@@ -35,4 +35,4 @@
       // 杀掉 所有  用 AddTo 绑定到 this 的计时器
      this.KillTimers();
 ```
-[更多](.//Assets/WooTimer/Runtime/TimeEx.cs)
+
