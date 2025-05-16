@@ -35,4 +35,4 @@
       // 杀掉 所有  用 AddTo 绑定到 this 的计时器
      this.KillTimers();
 ```
-[更多](https://github.com/OnClick9927/WooTimer/blob/main/Assets/WooTimer/Runtime/TimeEx.cs)
+[更多](.//Assets/WooTimer/Runtime/TimeEx.cs)
