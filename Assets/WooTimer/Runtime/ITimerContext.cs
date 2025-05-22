@@ -15,8 +15,10 @@ namespace WooTimer
     public interface ITimerContext
     {
         string id { get; }
-        bool isDone { get; }
-        bool canceled { get; }
+        ITimerContext Bind<T>(T data);
+        T GetBind<T>();
+        //bool isDone { get; }
+        //bool canceled { get; }
 
     }
 

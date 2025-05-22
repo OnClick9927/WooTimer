@@ -41,7 +41,7 @@ namespace WooTimer
                 StaticPool<Queue<Action>>.Set(actions);
             }
 
-            public bool IsCompleted => op.isDone;
+            public bool IsCompleted => op.AsContextBase().isDone;
 
             public T GetResult() => op;
             public void OnCompleted(Action continuation)
