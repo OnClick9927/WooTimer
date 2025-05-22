@@ -13,9 +13,29 @@ namespace WooTimer
     public abstract class TimerContextBase : ITimerContext, IPoolObject
     {
         //public string guid { get; private set; } = Guid.NewGuid().ToString();
+        public ITimerContext Bind<T>(T data)
+        {
+            bind = data;
+            return this;
+        }
 
-        public bool isDone { get; private set; }
-        public bool canceled { get; private set; }
+        public T GetBind<T>()
+        {
+            if (bind == null)
+                return default;
+            try
+            {
+                return (T)bind;
+            }
+            catch (Exception)
+            {
+
+                return default;
+            }
+        }
+        object bind;
+        internal bool isDone { get; private set; }
+        internal bool canceled { get; private set; }
         public bool valid { get; set; }
 
         public string id { get; private set; }
@@ -27,46 +47,27 @@ namespace WooTimer
         private Action<ITimerContext> onComplete;
         private Action<ITimerContext> onCancel;
         private Action<ITimerContext> onBegin;
-
         private TimerAction onTick;
         protected float timeScale { get; private set; }
-        public void OnComplete(Action<ITimerContext> action) => onComplete += action;
-        public void OnCancel(Action<ITimerContext> action) => onCancel += action;
-        public void OnTick(TimerAction action) => onTick += action;
-        public void OnBegin(Action<ITimerContext> action) => onBegin += action;
+        internal void OnComplete(Action<ITimerContext> action) => onComplete += action;
+        internal void OnCancel(Action<ITimerContext> action) => onCancel += action;
+        internal void OnTick(TimerAction action) => onTick += action;
+        internal void OnBegin(Action<ITimerContext> action) => onBegin += action;
 
         protected void InvokeBegin()
         {
             onBegin?.Invoke(this);
-
         }
         protected void InvokeTick(float time, float delta)
         {
             onTick?.Invoke(time, delta);
 
         }
-        protected void InvokeCancel()
-        {
-            if (canceled) return;
 
-            canceled = true;
-            onCancel?.Invoke(this);
-        }
-        protected void SetCancel()
-        {
-            if (canceled) return;
-            canceled = true;
-
-        }
-        protected void InvokeComplete()
-        {
-            if (isDone) return;
-            isDone = true;
-            onComplete?.Invoke(this);
-        }
-
+ 
         protected virtual void Reset()
         {
+            bind = null;
             id = string.Empty;
             owner = null;
             onBegin = null;
@@ -74,32 +75,43 @@ namespace WooTimer
             onComplete = null;
             onTick = null;
 
-
-
-
             isDone = false;
             canceled = false;
-
             timeScale = 1;
+
+
+
         }
 
         protected virtual void StopChildren() { }
         private void _Cancel(bool invoke)
         {
-            if (!valid || canceled || isDone) return;
+            if (!((IPoolObject)this).valid || canceled || isDone) return;
+            if (canceled) return;
+            canceled = true;
+
             if (invoke)
-                InvokeCancel();
-            else
-                SetCancel();
+                onCancel?.Invoke(this);
             StopChildren();
             TimeEx.Cycle(this);
         }
-        public void Stop() => _Cancel(false);
-        public void Cancel() => _Cancel(true);
+        internal void Stop() => _Cancel(false);
+        internal void Cancel() => _Cancel(true);
+        internal void SetId(string id)
+        {
+            if (!((IPoolObject)this).valid) return;
+            this.id = id;
+        }
+        internal void SetOwner(object owner)
+        {
+            if (!((IPoolObject)this).valid) return;
+            this.owner = owner;
+        }
         protected void Complete()
         {
             if (isDone) return;
-            InvokeComplete();
+            isDone = true;
+            onComplete?.Invoke(this);
             TimeEx.Cycle(this);
 
         }
@@ -107,19 +119,10 @@ namespace WooTimer
 
         public virtual void SetTimeScale(float timeScale)
         {
-            if (!valid) return;
+            if (!((IPoolObject)this).valid) return;
             this.timeScale = timeScale;
         }
-        public void SetId(string id)
-        {
-            if (!valid) return;
-            this.id = id;
-        }
-        public void SetOwner(object owner)
-        {
-            if (!valid) return;
-            this.owner = owner;
-        }
+
         public abstract void Pause();
 
         public abstract void UnPause();
@@ -131,6 +134,7 @@ namespace WooTimer
 
         void IPoolObject.OnGet()
         {
+           
             Reset();
         }
 
@@ -138,6 +142,8 @@ namespace WooTimer
         {
             Reset();
         }
+
+
     }
 
 }
